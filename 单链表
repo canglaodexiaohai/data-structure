@@ -1,0 +1,266 @@
+#pragma once
+#include<stdlib.h>
+#include<stdio.h>
+#include<assert.h>
+#include<math.h>
+typedef int DataType;
+
+typedef struct SListNode
+{ 
+	struct SListNode* _next;
+	DataType _data;
+}SListNode;
+
+SListNode* BuySListNode(DataType x);
+void SListPrint(SListNode* pHead);
+
+void SListPushBack(SListNode** ppHead,DataType x);
+void SListPopBack(SListNode** ppHead);
+void SListPushFront(SListNode** ppHead, DataType x);
+void SListPopFront(SListNode** ppHead);
+
+SListNode* SListFind(SListNode* pHead, DataType x);
+
+void SListInsert(SListNode** ppHead,SListNode* pos,DataType x);
+void SListErase(SListNode** ppHead, SListNode* pos);
+
+///
+SListNode* BuySListNode(DataType x)
+{
+	SListNode* node = (SListNode*)malloc(sizeof(SListNode));
+	node->_data = x;
+	node->_next = NULL;
+	return node;
+}
+void SListPrint(SListNode* pHead)
+{
+	SListNode* cur = pHead;
+	while (cur)
+	{
+		printf("%d ", cur->_data);
+		cur = cur->_next;
+	}
+
+	printf("\n");
+}
+void SListPushBack(SListNode** ppHead, DataType x)
+{
+	assert(ppHead);
+	if (*ppHead == NULL)
+	{
+		*ppHead = BuySListNode(x);
+	}
+	else
+	{
+		SListNode* cur = *ppHead;
+		while (cur->_next)
+		{
+			cur = cur->_next;
+		}
+		cur->_next = BuySListNode(x);
+	}
+}
+void TestSListPushBack()
+{
+	SListNode* pHead=NULL;
+	SListPushBack(&pHead, 1);
+	SListPushBack(&pHead, 2);
+	SListPushBack(&pHead, 3);
+	SListPushBack(&pHead, 4);
+	SListPushBack(&pHead, 5);
+	SListPushBack(&pHead, 6);
+	SListPrint(pHead);
+}
+void SListPopBack(SListNode** ppHead)
+{
+	assert(ppHead);
+	if (*ppHead == NULL)
+		return;
+	else
+	{
+		SListNode* prev = NULL;
+		SListNode* tail = *ppHead;
+		while (tail->_next)
+		{
+			prev = tail;
+			tail = tail->_next;
+
+		}
+		if (prev == NULL)
+			*ppHead = NULL;
+		else
+			prev->_next = NULL;
+		free(tail);
+	}
+}
+void TestSListPopBack()
+{
+	SListNode* pHead = NULL;
+	SListPushBack(&pHead, 1);
+	SListPushBack(&pHead, 2);
+	SListPushBack(&pHead, 3);
+	SListPushBack(&pHead, 4);
+	SListPrint(pHead);
+	SListPopBack(&pHead);
+	SListPopBack(&pHead);
+	SListPrint(pHead);
+
+	SListPopBack(&pHead);
+	SListPopBack(&pHead);
+	SListPrint(pHead);
+
+	SListPopBack(&pHead);
+	SListPrint(pHead);
+
+}
+void SListPushFront(SListNode** ppHead, DataType x)
+{
+	assert(ppHead);
+	if (*ppHead == NULL)
+		*ppHead = BuySListNode(x);
+	else
+	{
+		SListNode* node = BuySListNode(x);
+		node->_next = *ppHead;
+		*ppHead = node;
+	}
+}
+void TestSListPushFront()
+{
+	SListNode* pHead = NULL;
+	SListPushFront(&pHead, 5);
+	SListPushFront(&pHead, 4);
+	SListPushFront(&pHead, 3);
+	SListPushFront(&pHead, 2);
+	SListPushFront(&pHead, 1);
+	SListPrint(pHead);
+}
+void SListPopFront(SListNode** ppHead)
+{
+	assert(ppHead);
+	if (*ppHead == NULL)
+		return;
+	else if ((*ppHead)->_next == NULL)
+	{
+		free(*ppHead);
+		*ppHead = NULL;
+	}
+	else
+	{
+		SListNode* prev = *ppHead;
+		*ppHead = prev->_next;
+		free(prev);
+	}
+}
+void TestSListPopFront()
+{
+	SListNode* pHead = NULL;
+	SListPushFront(&pHead, 5);
+	SListPushFront(&pHead, 4);
+	SListPushFront(&pHead, 3);
+	SListPushFront(&pHead, 2);
+	SListPushFront(&pHead, 1);
+	SListPrint(pHead);
+	SListPopFront(&pHead);
+	SListPopFront(&pHead);
+	SListPrint(pHead);
+	SListPopFront(&pHead);
+	SListPrint(pHead);
+	SListPopFront(&pHead);
+	SListPrint(pHead);
+	SListPopFront(&pHead);
+	SListPrint(pHead);
+}
+SListNode* SListFind(SListNode* pHead, DataType x)
+{
+	assert(pHead);
+	SListNode* cur = pHead;
+
+	while (cur)
+	{
+		if (cur->_data == x)
+	
+			return cur;
+		
+		cur = cur->_next;
+	}
+	return NULL;
+}
+void TestSListFind()
+{
+	SListNode* pHead = NULL;
+	SListPushBack(&pHead, 1);
+	SListPushBack(&pHead, 2);
+	SListPushBack(&pHead, 3);
+	SListPushBack(&pHead, 4);
+	SListPushBack(&pHead, 5);
+	printf("%d ", SListFind(pHead, 5)->_data);
+}
+
+void SListInsert(SListNode** ppHead, SListNode* pos, DataType x)
+{
+	assert(ppHead&&pos);
+	if (pos == *ppHead)
+	{
+		SListPushFront(ppHead, x);
+	}
+	else
+	{
+		SListNode* node = BuySListNode(x);
+		SListNode* prev = *ppHead;
+		while (prev->_next != pos)
+		{
+			prev = prev->_next;
+		}
+		node->_next = pos;
+		prev->_next = node;
+	}
+}
+void TestSListInsert()
+{
+	SListNode* pos = NULL;
+	SListNode* list = NULL;
+	SListPushBack(&list, 1);
+	SListPushBack(&list, 2);
+	SListPushBack(&list, 3);
+	SListPushBack(&list, 4);
+	SListPushBack(&list, 5);
+	SListPrint(list);
+
+	pos = SListFind(list, 3);
+	SListInsert(&list, pos, 30);
+	SListPrint(list);
+}
+void SListErase(SListNode** ppHead, SListNode* pos)
+{
+	assert(ppHead&&pos);
+	if (pos == *ppHead)
+	{
+		SListPopFront(ppHead);
+	}
+	else
+	{
+		SListNode* prev = *ppHead;
+		while (prev->_next != pos)
+		{
+			prev = prev->_next;
+		}
+		prev->_next = pos->_next;
+		free(pos);
+	}
+}
+void TestSListErase()
+{
+	SListNode* pos = NULL;
+	SListNode* list = NULL;
+	SListPushBack(&list, 1);
+	SListPushBack(&list, 2);
+	SListPushBack(&list, 3);
+	SListPushBack(&list, 4);
+	SListPushBack(&list, 5);
+	SListPrint(list);
+
+	pos = SListFind(list, 3);
+	SListErase(&list, pos);
+	SListPrint(list);
+}
