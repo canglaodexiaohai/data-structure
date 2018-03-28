@@ -1,0 +1,9 @@
+void DelNonTailNode(SListNode* pos)
+{
+	SListNode* next;
+	assert(pos&&pos->_next);
+	next = pos->_next;
+	pos->_next = next->_next;
+	pos->_data = next->_data;
+	free(next);
+}
