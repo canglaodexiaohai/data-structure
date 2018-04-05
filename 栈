@@ -1,0 +1,76 @@
+#define _CRT_SECURE_NO_WARNINGS 1
+#pragma once
+#include<stdio.h>
+#include<stdlib.h>
+#include<assert.h>
+
+//typedef struct Pos
+//{
+//	int _row;
+//	int _col;
+//}Pos;
+//typedef Pos SDataType;
+typedef int SDataType;
+typedef struct Stack
+{
+	SDataType* _array;
+	size_t _top; //栈顶 
+	size_t _end;
+}Stack;
+
+// 栈的实现接口 
+void StackInit(Stack* s);
+void StackPush(Stack* s, SDataType x);
+void StackPop(Stack* s);
+SDataType StackTop(Stack* s);
+size_t StackSize(Stack* s);
+int StackEmpty(Stack* s);
+
+
+void StackInit(Stack* s)
+{
+	assert(s);
+	s->_array = NULL;
+	s->_end = 0;
+	s->_top = 0;
+}
+void StackPush(Stack* s, SDataType x)
+{
+	if (s->_top == s->_end)
+	{
+		size_t size = s->_end > 0 ? s->_end * 2 : 3;
+		s->_array = (SDataType*)realloc(s->_array, size*sizeof(SDataType));
+		assert(s->_array);
+		s->_end = size;
+	}
+
+	s->_array[s->_top++] = x;
+}
+
+void StackPop(Stack* s)//出栈
+{
+	assert(s);
+	if (s->_top > 0)
+		--s->_top;
+}
+
+SDataType StackTop(Stack* s)//栈顶
+{
+	assert(s);
+	return s->_array[s->_top - 1];
+}
+
+size_t StackSize(Stack* s)
+{
+	assert(s);
+
+	return s->_top;
+}
+
+// 返回0就是空
+int StackEmpty(Stack* s)
+{
+	assert(s);
+
+	return s->_top;
+}
