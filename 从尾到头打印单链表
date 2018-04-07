@@ -1,0 +1,36 @@
+void SListPrintTailToHead(SListNode* pHead)
+{
+	
+	SListNode* tail = NULL;
+	while (pHead != tail)
+	{
+		SListNode* cur = pHead;
+		while (cur->_next != tail)
+		{
+			cur = cur->_next;
+		}
+		printf("%d ", cur->_data);
+		tail = cur;
+	}
+	printf("\n");
+}
+void SListPrintTailToHeadR(SListNode* pHead)
+{
+	if (pHead == NULL)
+		return;
+	SListPrintTailToHeadR(pHead->_next);
+	printf("%d ", pHead->_data);
+
+}
+void TestSListPrintTailToHead()
+{
+	SListNode* list = NULL;
+	SListPushBack(&list, 1);
+	SListPushBack(&list, 2);
+	SListPushBack(&list, 3);
+	SListPushBack(&list, 4);
+	SListPushBack(&list, 5);
+
+	SListPrintTailToHead(list);
+	SListPrintTailToHeadR(list);
+}
