@@ -336,6 +336,6 @@ void TestBinaryTree()
 	printf("第k层节点个数：%d\n", BTreeKlevelSize(tree, 3));
 	printf("树的深度：%d\n", BTreeDepth(tree));
 	printf("查找结点: %d\n", BTreeFind(tree, 6)->_data);
-	printf("是否是满二叉树：%d\n", IsCompleteBTree1(tree));
-	printf("是否是满二叉树：%d\n", IsCompleteBTree2(tree));
+	printf("是否是完全二叉树：%d\n", IsCompleteBTree1(tree));
+	printf("是否是完全二叉树：%d\n", IsCompleteBTree2(tree));
 }
