@@ -1,0 +1,242 @@
+#define _CRT_SECURE_NO_WARNINGS 1
+#include<graphics.h> // 图形库头文件
+//#include<iostream>
+#include<conio.h>
+#define M 14   // 最后一关格子数目
+#define G 40   //单个格子的边长
+struct GRID
+{
+	int left;
+	int right;
+	int up;
+	int down;
+	int arr[M][M];//格子状态 -1表示暗  1表示明
+	int num;//单边格子数目
+}grid;
+
+void Welcome()
+{
+	initgraph(640, 480);
+	//字体大小
+	settextstyle(64, 0, _T("宋体"));
+	//字体颜色
+	settextcolor(LIGHTGREEN);
+	outtextxy(150, 50, _T("涂格子游戏"));
+
+	settextstyle(20, 0, _T("宋体"));
+	//字体颜色
+	settextcolor(WHITE);
+	outtextxy(170, 180, _T("总共11关，单击鼠标左键改变颜色"));
+
+	int color = 255;
+	while (!_kbhit())
+	{
+		settextcolor(RGB(0, color -= 8, 0));
+		outtextxy(240, 400, _T("请按任意键继续！"));
+		Sleep(20);
+	}
+
+	cleardevice();
+}
+
+//绘制格子
+void DrawGird(int mx,int my,int num)
+{
+	//mx,my表示中央横纵坐标
+	int i = 0;
+	int j = 0;
+	int nx = 0;
+	int ny = 0;
+
+	grid.left = mx - num*G / 2;
+	grid.right = mx + num*G / 2;
+	grid.up = my - num*G / 2;
+	grid.down = my + num*G / 2;
+
+	setlinecolor(LIGHTGREEN);
+	for ( i = grid.left; i <= grid.right; i += G)
+	{
+		line(i, grid.up, i, grid.down);//画竖线
+	}
+	for (j = grid.up; j <= grid.down; j += G)
+	{
+		line(grid.left, j, grid.right, j);//画横线
+	}
+	//清空单元格
+	for ( i = 0; i < M; ++i)
+	{
+		for ( j = 0; j < M; ++j)
+		{
+			grid.arr[i][j] = -1;
+		}
+	}
+	//设置格子背景颜色
+	for (nx = 0; nx < num; ++nx)
+	{
+		for (ny = 0; ny < num; ++ny)
+		{
+			setfillcolor(BLACK);
+			i = nx*G + grid.left;
+			j = ny*G + grid.up;
+			solidrectangle(i + 1, j + 1, i + G - 1, j + G - 1);//画填充矩形
+		}
+	}
+}
+
+
+//鼠标左键转换状态
+void OnLButtonDown(MOUSEMSG m,int num)
+{
+	int x, y, nx, ny;
+
+	if (m.x > grid.left&&m.x < grid.right&&m.y<grid.down&&m.y>grid.up)
+	{
+		//求出数组下标
+		nx = (int)(m.x - grid.left) / G;
+		ny = (int)(m.y - grid.up) / G;
+		//转换格子状态
+		grid.arr[nx][ny] *= -1;		
+	}
+	//left
+	if (nx > 0 && nx < num)
+		grid.arr[nx - 1][ny] *= -1;
+	//right
+	if (nx >= 0 && nx < num - 1)
+		grid.arr[nx + 1][ny] *= -1;
+	//up
+	if (ny > 0 && ny < num)
+		grid.arr[nx][ny - 1] *= -1;
+	//down
+	if (ny >= 0 && ny < num - 1)
+		grid.arr[nx][ny + 1] *= -1;
+	//填充颜色
+	for (nx = 0; nx < num; ++nx)
+	{
+		for (ny = 0; ny < num; ++ny)
+		{
+			if (grid.arr[nx][ny] == 1)
+				setfillcolor(GREEN);
+			else
+				setfillcolor(BLACK);
+			x = nx*G + grid.left;
+			y = ny*G + grid.up;
+			solidrectangle(x + 1, y + 1, x + G - 1, y + G - 1);//画填充矩形
+		}
+	}
+}
+
+void OnRButtonDown(int num)
+{
+	int i, j, nx, ny;
+	for (i = 0; i < M; ++i)
+	{
+		for (j = 0; j < M; ++j)
+		{
+			grid.arr[i][j] = -1;
+		}
+	}
+	//设置格子背景颜色
+	for (nx = 0; nx < num; ++nx)
+	{
+		for (ny = 0; ny < num; ++ny)
+		{
+			setfillcolor(BLACK);
+			i = nx*G + grid.left;
+			j = ny*G + grid.up;
+			solidrectangle(i + 1, j + 1, i + G - 1, j + G - 1);//画填充矩形
+		}
+	}
+}
+
+int Judge(int num,int arr[M][M])
+{
+	int ret = -1;
+	int i = 0;
+	int j = 0;
+	while (i < num&&j < num)
+	{
+		for ( i = 0; i < num; ++i)
+		{
+			for ( j = 0; j < num; ++j)
+			{
+				if (arr[i][j] == 1)
+					continue;
+				else
+					return ret;
+			}
+		}
+	}
+	
+	ret = 1;
+	return ret;
+}
+
+void NextLevel(int num)
+{
+	BeginBatchDraw();//开启批量绘图
+	for (int y = 0; y <= 480; ++y)
+	{
+		setlinecolor(LIGHTGREEN);
+		line(0, y, 640, y);
+		line(0, 480 - y, 640, 480 - y);
+		Sleep(16);
+
+		setfillcolor(BLACK);
+		solidrectangle(0, y, 640, y);
+		solidrectangle(0, 480-y, 640, 480-y);
+
+	}
+	EndBatchDraw();
+	Sleep(20);
+	DrawGird(320, 240, grid.num);
+	 
+}
+
+
+int Dispatch()
+{
+	MOUSEMSG m;
+	while (1)
+	{
+		m = GetMouseMsg();
+		switch (m.uMsg)
+		{
+		case WM_LBUTTONDOWN:
+			OnLButtonDown(m, grid.num);
+			if (Judge(grid.num, grid.arr) == 1)
+			{
+				grid.num++;
+				if (grid.num > M)
+				{
+					return 1;
+					break;
+				}
+				else
+				{
+					NextLevel(grid.num);
+				}
+			}
+			break;
+		case WM_RBUTTONDOWN:
+			OnRButtonDown(grid.num);
+			break;
+		default:
+			break;
+		}
+	}
+}
+int main()
+{
+	int end = 0;
+	grid.num = 4;
+	Welcome();
+	//system("pause");
+	DrawGird(320, 240, grid.num);
+	NextLevel(grid.num);
+	/*while (end!=1)
+	{
+		end=Dispatch();
+	}
+	closegraph();*/
+	return 0;
+}
